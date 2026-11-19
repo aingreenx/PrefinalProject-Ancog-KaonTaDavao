@@ -17,10 +17,7 @@
 
     <header class="bg-board text-chalk">
         <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 pb-5 pt-5 md:flex-row md:items-end md:justify-between">
-            <a href="{{ route('home') }}" class="group leading-tight">
-                <span class="font-display text-4xl font-black tracking-tight text-luyang sm:text-5xl">Kaon Ta! Davao</span>
-                <span class="whitespace-nowrap text-base font-semibold text-chalk-soft group-hover:text-chalk">– Ancog's Food Guide</span>
-            </a>
+            <a href="{{ route('home') }}" class="font-display text-3xl font-black leading-none tracking-tight text-luyang hover:text-[#f0b434] sm:text-4xl">Kaon Ta! Davao – Ancog's Food Guide</a>
             @include('partials.nav')
         </div>
     </header>
