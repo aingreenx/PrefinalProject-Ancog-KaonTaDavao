@@ -68,7 +68,7 @@ class EateryController extends Controller
         $eatery = DB::transaction(function () use ($data): Eatery {
             $eatery = Eatery::create([
                 ...Arr::only($data, self::EATERY_FIELDS),
-                'slug' => Str::slug($data['name']),
+                'slug' => $this->uniqueSlug(Str::slug($data['name'])),
             ]);
             $eatery->permit()->create(Arr::only($data, self::PERMIT_FIELDS));
             $eatery->features()->sync($data['features']);
@@ -113,7 +113,7 @@ class EateryController extends Controller
         DB::transaction(function () use ($data, $eatery): void {
             $eatery->update([
                 ...Arr::only($data, self::EATERY_FIELDS),
-                'slug' => Str::slug($data['name']),
+                'slug' => $this->uniqueSlug(Str::slug($data['name']), $eatery->id),
             ]);
             // Update the existing permit, or create one if it is missing.
             $eatery->permit()->updateOrCreate([], Arr::only($data, self::PERMIT_FIELDS));
@@ -135,5 +135,22 @@ class EateryController extends Controller
         });
 
         return redirect()->route('eateries.index')->with('status', 'Eatery deleted.');
+    }
+
+    /**
+     * Two names can make the same slug ("Kainan!" and "Kainan" both give "kainan").
+     * If the slug is taken by another eatery, add -2, -3, ... so saving never fails.
+     */
+    private function uniqueSlug(string $slug, ?int $ignoreId = null): string
+    {
+        $candidate = $slug;
+        $number = 2;
+
+        while (Eatery::where('slug', $candidate)->where('id', '!=', $ignoreId ?? 0)->exists()) {
+            $candidate = $slug . '-' . $number;
+            $number++;
+        }
+
+        return $candidate;
     }
 }
