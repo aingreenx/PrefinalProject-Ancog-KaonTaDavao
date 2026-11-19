@@ -1,15 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1 class="mb-6 text-3xl font-bold tracking-tight">Add Eatery</h1>
+    <div class="mx-auto max-w-3xl">
+        <h1 class="font-display text-5xl font-black tracking-tight text-board">Add Eatery</h1>
+        <p class="mt-1 mb-8 text-ink-soft">List a carinderia with its district, features, and business permit.</p>
 
-    <form method="POST" action="{{ route('eateries.store') }}" class="rounded-xl border border-stone-200 bg-white p-6">
-        @csrf
-        @include('eateries._form')
+        <form method="POST" action="{{ route('eateries.store') }}" class="rounded-md border-[1.5px] border-line bg-[#fffaf0] p-6 sm:p-8" novalidate>
+            @csrf
+            @include('eateries._form')
 
-        <div class="mt-8 flex gap-3">
-            <button type="submit" class="rounded-lg bg-orange-600 px-5 py-2 font-semibold text-white hover:bg-orange-700">Add Eatery</button>
-            <a href="{{ route('eateries.index') }}" class="rounded-lg px-5 py-2 font-medium text-stone-600 hover:bg-stone-100">Cancel</a>
-        </div>
-    </form>
+            <div class="mt-10 flex flex-wrap gap-3 border-t border-dashed border-line pt-6">
+                <button type="submit" class="btn btn-primary"><x-icon name="plus" />Add Eatery</button>
+                <a href="{{ route('eateries.index') }}" class="btn btn-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
 @endsection

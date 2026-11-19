@@ -45,4 +45,17 @@ class StoreReviewRequest extends FormRequest
             'body.min' => 'Kaon Ta Ancog: reviews need at least 10 characters.',
         ];
     }
+
+    /**
+     * Friendly field names for Laravel's default messages.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'user_id' => 'reviewer',
+            'body' => 'review',
+        ];
+    }
 }

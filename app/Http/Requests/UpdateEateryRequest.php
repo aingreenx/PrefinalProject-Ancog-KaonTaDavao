@@ -67,4 +67,21 @@ class UpdateEateryRequest extends FormRequest
             'expires_on.after' => 'The permit must not be expired.',
         ];
     }
+
+    /**
+     * Friendly field names for Laravel's default messages.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'district_id' => 'district',
+            'price_range' => 'price range',
+            'is_open' => 'open',
+            'features.*' => 'feature',
+            'permit_no' => 'permit number',
+            'expires_on' => 'permit expiry date',
+        ];
+    }
 }
