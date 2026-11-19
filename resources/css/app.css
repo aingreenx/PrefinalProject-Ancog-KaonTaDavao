@@ -6,7 +6,212 @@
 @source "../**/*.js";
 @source "../**/*.vue";
 
+/*
+ * Kaon Ta! Davao: the carinderia counter.
+ * Manila-paper surfaces, a pisara (chalkboard) green, sili red for warnings,
+ * luyang dilaw (turmeric) for highlights, and masking-tape labels.
+ */
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Big Shoulders Display', 'Public Sans', ui-sans-serif, sans-serif;
+    --font-hand: 'Permanent Marker', 'Comic Sans MS', cursive;
+
+    --color-paper: #f6efe2;
+    --color-paper-deep: #ecdfc6;
+    --color-line: #d6c6a6;
+    --color-ink: #1f2a1e;
+    --color-ink-soft: #55574a;
+    --color-board: #1e3b2c;
+    --color-board-deep: #142a1f;
+    --color-chalk: #f3efe4;
+    --color-chalk-soft: #c9d3c4;
+    --color-sili: #b8321c;
+    --color-sili-deep: #8f2514;
+    --color-luyang: #e3a21a;
+    --color-tape: #f1e2a4;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+        scrollbar-color: var(--color-line) var(--color-paper);
+    }
+
+    body {
+        font-feature-settings: 'ss01';
+    }
+
+    ::selection {
+        background-color: var(--color-luyang);
+        color: var(--color-ink);
+    }
+
+    input,
+    textarea,
+    select {
+        caret-color: var(--color-sili);
+    }
+
+    a {
+        text-underline-offset: 0.2em;
+        text-decoration-thickness: 1.5px;
+    }
+
+    :focus-visible {
+        outline: 3px solid var(--color-luyang);
+        outline-offset: 2px;
+    }
+
+    h1,
+    h2,
+    h3 {
+        text-wrap: balance;
+    }
+}
+
+@layer components {
+    /* Striped tarpaulin awning with a scalloped edge, like the front of a carinderia. */
+    .awning {
+        height: 1.25rem;
+        background: repeating-linear-gradient(
+            90deg,
+            var(--color-board) 0 2.5rem,
+            var(--color-luyang) 2.5rem 5rem
+        );
+        -webkit-mask: radial-gradient(1.25rem 0.75rem at 1.25rem 0.5rem, #000 98%, transparent) 0 0 / 2.5rem 100%,
+            linear-gradient(#000 0 0) 0 0 / 100% 0.5rem no-repeat;
+        mask: radial-gradient(1.25rem 0.75rem at 1.25rem 0.5rem, #000 98%, transparent) 0 0 / 2.5rem 100%,
+            linear-gradient(#000 0 0) 0 0 / 100% 0.5rem no-repeat;
+    }
+
+    /* Masking-tape label for features. */
+    .tape {
+        display: inline-block;
+        background: color-mix(in oklab, var(--color-tape) 88%, transparent);
+        color: var(--color-ink);
+        padding: 0.125rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1.25rem;
+        clip-path: polygon(2% 0, 98% 4%, 100% 50%, 97% 100%, 1% 96%, 0 50%);
+    }
+
+    /* Rubber stamp: "Closed", "Permit expired". */
+    .stamp {
+        display: inline-block;
+        border: 2px solid currentColor;
+        border-radius: 0.25rem;
+        padding: 0 0.5rem;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.875rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        transform: rotate(-4deg);
+        box-shadow: inset 0 0 0 1px color-mix(in oklab, currentColor 35%, transparent);
+    }
+
+    /* Dotted leader between a dish and its price on the pisara. */
+    .leader {
+        flex: 1;
+        min-width: 1rem;
+        border-bottom: 2px dotted color-mix(in oklab, var(--color-chalk) 40%, transparent);
+        transform: translateY(-0.35em);
+    }
+
+    .field {
+        margin-top: 0.375rem;
+        width: 100%;
+        border: 1.5px solid var(--color-line);
+        border-radius: 0.375rem;
+        background: #fffdf8;
+        padding: 0.5rem 0.75rem;
+        color: var(--color-ink);
+        transition: border-color 150ms, box-shadow 150ms;
+    }
+
+    .field::placeholder {
+        color: #7a7867;
+    }
+
+    .field:hover {
+        border-color: #bba982;
+    }
+
+    .field:focus {
+        outline: none;
+        border-color: var(--color-board);
+        box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-luyang) 55%, transparent);
+    }
+
+    .field[aria-invalid='true'] {
+        border-color: var(--color-sili);
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border-radius: 0.375rem;
+        padding: 0.55rem 1.1rem;
+        font-weight: 700;
+        font-size: 0.9375rem;
+        transition: background-color 150ms, color 150ms, transform 150ms var(--ease-out-expo);
+    }
+
+    .btn:active {
+        transform: translateY(1px);
+    }
+
+    .btn-primary {
+        background: var(--color-board);
+        color: var(--color-chalk);
+    }
+
+    .btn-primary:hover {
+        background: var(--color-board-deep);
+    }
+
+    .btn-ghost {
+        color: var(--color-ink);
+        box-shadow: inset 0 0 0 1.5px var(--color-line);
+    }
+
+    .btn-ghost:hover {
+        background: var(--color-paper-deep);
+    }
+
+    .btn-danger {
+        color: var(--color-sili);
+        box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--color-sili) 45%, transparent);
+    }
+
+    .btn-danger:hover {
+        background: var(--color-sili);
+        color: #fff;
+    }
+
+    .flash {
+        animation: flash-in 600ms var(--ease-out-expo) both;
+    }
+}
+
+@keyframes flash-in {
+    from {
+        opacity: 0.4;
+        transform: translateY(-0.5rem);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flash {
+        animation: none;
+    }
+
+    .btn {
+        transition: none;
+    }
 }
