@@ -4,17 +4,27 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreEateryRequest;
+use App\Http\Requests\UpdateEateryRequest;
 use App\Models\District;
 use App\Models\Eatery;
 use App\Models\Feature;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class EateryController extends Controller
 {
+    /** Validated keys that belong to the eateries table. */
+    private const EATERY_FIELDS = ['district_id', 'name', 'address', 'price_range', 'specialty', 'is_open'];
+
+    /** Validated keys that belong to the permits table. */
+    private const PERMIT_FIELDS = ['permit_no', 'expires_on'];
+
     public function index(Request $request): View
     {
         $q = $request->string('q')->trim()->toString();
@@ -44,12 +54,29 @@ class EateryController extends Controller
 
     public function create(): View
     {
-        abort(501); // Phase 4
+        return view('eateries.create', [
+            'eatery' => new Eatery(),
+            'districts' => District::orderBy('name')->get(),
+            'features' => Feature::orderBy('name')->get(),
+        ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreEateryRequest $request): RedirectResponse
     {
-        abort(501); // Phase 4
+        $data = $request->validated();
+
+        $eatery = DB::transaction(function () use ($data): Eatery {
+            $eatery = Eatery::create([
+                ...Arr::only($data, self::EATERY_FIELDS),
+                'slug' => Str::slug($data['name']),
+            ]);
+            $eatery->permit()->create(Arr::only($data, self::PERMIT_FIELDS));
+            $eatery->features()->sync($data['features']);
+
+            return $eatery;
+        });
+
+        return redirect()->route('eateries.show', $eatery)->with('status', 'Eatery added.');
     }
 
     public function show(Eatery $eatery): View
@@ -70,12 +97,30 @@ class EateryController extends Controller
 
     public function edit(Eatery $eatery): View
     {
-        abort(501); // Phase 4
+        $eatery->load(['permit', 'features']);
+
+        return view('eateries.edit', [
+            'eatery' => $eatery,
+            'districts' => District::orderBy('name')->get(),
+            'features' => Feature::orderBy('name')->get(),
+        ]);
     }
 
-    public function update(Request $request, Eatery $eatery): RedirectResponse
+    public function update(UpdateEateryRequest $request, Eatery $eatery): RedirectResponse
     {
-        abort(501); // Phase 4
+        $data = $request->validated();
+
+        DB::transaction(function () use ($data, $eatery): void {
+            $eatery->update([
+                ...Arr::only($data, self::EATERY_FIELDS),
+                'slug' => Str::slug($data['name']),
+            ]);
+            // Update the existing permit, or create one if it is missing.
+            $eatery->permit()->updateOrCreate([], Arr::only($data, self::PERMIT_FIELDS));
+            $eatery->features()->sync($data['features']);
+        });
+
+        return redirect()->route('eateries.show', $eatery)->with('status', 'Eatery updated.');
     }
 
     public function destroy(Eatery $eatery): RedirectResponse

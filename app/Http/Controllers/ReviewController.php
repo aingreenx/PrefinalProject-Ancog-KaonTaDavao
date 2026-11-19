@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreReviewRequest;
 use App\Models\Eatery;
 use App\Models\Review;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-    public function store(Request $request, Eatery $eatery): RedirectResponse
+    public function store(StoreReviewRequest $request, Eatery $eatery): RedirectResponse
     {
-        abort(501); // Phase 4 (needs StoreReviewRequest)
+        // Created through the relationship, so eatery_id is set automatically.
+        $eatery->reviews()->create($request->validated());
+
+        return redirect()->route('eateries.show', $eatery)->with('status', 'Salamat! Review posted.');
     }
 
     public function destroy(Review $review): RedirectResponse
