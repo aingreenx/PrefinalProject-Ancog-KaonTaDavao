@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Seeders;
+
+use App\Models\District;
+use Illuminate\Database\Seeder;
+
+class DistrictSeeder extends Seeder
+{
+    public function run(): void
+    {
+        foreach (['Poblacion', 'Talomo', 'Agdao', 'Buhangin', 'Toril', 'Tugbok'] as $name) {
+            District::create(['name' => $name]);
+        }
+    }
+}
