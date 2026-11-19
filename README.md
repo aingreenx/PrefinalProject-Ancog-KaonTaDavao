@@ -20,6 +20,14 @@ php artisan serve
 
 Then open http://127.0.0.1:8000.
 
+**On Windows PowerShell:** `touch` does not exist there. Create the empty SQLite file with this instead (the other commands work as written):
+
+```powershell
+New-Item -ItemType File database/database.sqlite
+```
+
+Or run the commands above in Git Bash, where `touch` works.
+
 ## My personalized data
 
 | Item | Value |
