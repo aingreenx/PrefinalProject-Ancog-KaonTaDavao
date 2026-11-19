@@ -20,6 +20,7 @@ class ReviewFactory extends Factory
             'user_id' => User::factory(),
             'rating' => fake()->numberBetween(1, 5),
             'body' => fake()->sentence(12),
+            'created_at' => fake()->dateTimeBetween('-6 months', '-1 day'),
         ];
     }
 }
